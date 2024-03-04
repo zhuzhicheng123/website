@@ -1,0 +1,18 @@
+<html>
+<script>
+function move(n,source,destination,temp)
+{
+   if(n=1)
+{
+   document.writen("move"+source+"to"+destination);
+}
+   else
+ {
+    move(n-1,source,temp,destination)
+    move(1,source,destination,temp)
+    move(n-1,temp,destination,source)
+ }
+}
+move(3,1,3,2)
+<script>
+<html>
