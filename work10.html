@@ -1,0 +1,140 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tower of Hanoi Game</title>
+    <style>
+        /* 样式 */
+        #towerOfHanoiGame {
+            display: flex;
+            justify-content: space-between;
+            height: 300px;
+            background-color: #f0f0f0;
+        }
+
+        .pillar {
+            width: 10px;
+            height: 200px;
+            background-color: brown;
+            position: relative;
+        }
+
+        .disk {
+            width: 50px;
+            height: 20px;
+            background-color: #2196F3;
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+    </style>
+</head>
+
+<body>
+    <div id="towerOfHanoiGame">
+        <div class="pillar" id="pillar1"></div>
+        <div class="pillar" id="pillar2"></div>
+        <div class="pillar" id="pillar3"></div>
+    </div>
+
+    <select id="numDisksSelect">
+        <option value="3">3 Disks</option>
+        <option value="4">4 Disks</option>
+        <option value="5">5 Disks</option>
+        <option value="6">6 Disks</option>
+    </select>
+    <button id="startButton">Start</button>
+    <button id="pauseButton">Pause</button>
+    <button id="resumeButton">Resume</button>
+    <select id="timePeriodSelect">
+        <option value="1000">1s</option>
+        <option value="500">0.5s</option>
+        <option value="200">0.2s</option>
+    </select>
+
+    <script>
+        const towerOfHanoiGame = document.getElementById('towerOfHanoiGame');
+        const pillar1 = document.getElementById('pillar1');
+        const pillar2 = document.getElementById('pillar2');
+        const pillar3 = document.getElementById('pillar3');
+        const numDisksSelect = document.getElementById('numDisksSelect');
+        const startButton = document.getElementById('startButton');
+        const pauseButton = document.getElementById('pauseButton');
+        const resumeButton = document.getElementById('resumeButton');
+        const timePeriodSelect = document.getElementById('timePeriodSelect');
+        let disks = [];
+        let currentMove = 0;
+
+        // 创建盘子
+        function createDisk(diskNumber, sourcePillar) {
+            const disk = document.createElement('div');
+            disk.classList.add('disk');
+            disk.style.width = `${20 + diskNumber * 10}px`;
+            disk.style.bottom = `${20 * (sourcePillar.children.length)}px`;
+            sourcePillar.appendChild(disk);
+            return disk;
+        }
+
+        // 移动盘子的动画
+        function moveDisk(disk, destPillar) {
+            const destPosition = destPillar.children.length;
+            disk.style.bottom = `${20 * destPosition}px`;
+        }
+
+        // 开始游戏
+        startButton.addEventListener('click', () => {
+            // 清空上一局的盘子
+            while (pillar1.firstChild) {
+                pillar1.removeChild(pillar1.firstChild);
+            }
+            while (pillar2.firstChild) {
+                pillar2.removeChild(pillar2.firstChild);
+            }
+            while (pillar3.firstChild) {
+                pillar3.removeChild(pillar3.firstChild);
+            }
+
+            // 创建新的盘子
+            const numDisks = parseInt(numDisksSelect.value);
+            disks = [];
+            for (let i = 0; i < numDisks; i++) {
+                const disk = createDisk(i, pillar1);
+                disks.push(disk);
+            }
+            currentMove = 0;
+            playTowerOfHanoi(numDisks, pillar1, pillar3, pillar2);
+        });
+
+        // 暂停游戏
+        let moveTimeout;
+        pauseButton.addEventListener('click', () => {
+            clearTimeout(moveTimeout);
+        });
+
+        // 恢复游戏
+        resumeButton.addEventListener('click', () => {
+            playTowerOfHanoi(disks.length, pillar1, pillar3, pillar2, currentMove);
+        });
+
+        // 汉诺塔递归算法
+        function playTowerOfHanoi(numDisks, sourcePillar, destPillar, auxPillar, move) {
+            if (move >= numDisks) {
+                return;
+            }
+
+            moveDisk(disks[move], destPillar);
+            moveTimeout = setTimeout(() => {
+                move++;
+                currentMove = move;
+                playTowerOfHanoi(numDisks, sourcePillar, destPillar, auxPillar, move);
+            }, parseInt(timePeriodSelect.value));
+        }
+    </script>
+</body>
+
+</html>
